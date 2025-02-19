@@ -13,8 +13,9 @@ namespace BulkyWeb.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int id)
         {
+            Console.WriteLine("Hello World " + id);
             return View();
         }
 
