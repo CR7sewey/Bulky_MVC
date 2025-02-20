@@ -1,8 +1,32 @@
-﻿@{
-    ViewData["Title"] = "Category Page";
-}
+﻿@model List<Category>
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">Category View</a>.</p>
+    <table class="table table-bordered table-striped">
+		<thead>
+			<tr>
+				<th>
+					Category Name
+				</th>
+				<th>
+					Display Order
+				</th>
+				<th></th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model.OrderBy(i => i.DisplayOrder))
+			{
+				<tr>
+					<td>
+						@item.CategoryName
+					</td>
+					<td>
+						@item.DisplayOrder
+					</td>
+				</tr>
+			}
+		</tbody>
+    </table>
 </div>
