@@ -20,5 +20,23 @@ namespace BulkyWeb.Controllers
             List<Category> objCategoryList = _db.Categories.ToList<Category>();
             return View(objCategoryList);
         }
+
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Create(Category obj)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Categories.Add(obj); // provided and habndled by entity framework! no open and close connection, or inserts!
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View();
+        }
+
     }
 }

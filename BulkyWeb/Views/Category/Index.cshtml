@@ -1,8 +1,18 @@
 ﻿@model List<Category>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">Category View</a>.</p>
+<div class="container">
+	<div class="row pt-4 pb-3">
+		<div class="col-6">
+			<h2 class="text-primary">Category List</h2>
+		</div>
+		<div class="col-6">
+			<h2 class="text-primary text-end">
+				<a asp-controller="Category" asp-action="Create" class="btn btn-primary">
+					<i class="bi bi-file-plus col"></i>Add New Category
+					</a>
+				</h2>
+		</div>
+	</div>
     <table class="table table-bordered table-striped">
 		<thead>
 			<tr>
@@ -12,7 +22,6 @@
 				<th>
 					Display Order
 				</th>
-				<th></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -29,4 +38,5 @@
 			}
 		</tbody>
     </table>
+	
 </div>
