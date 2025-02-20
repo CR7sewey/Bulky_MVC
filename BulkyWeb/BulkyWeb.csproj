@@ -7,6 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Views\Categories\**" />
+    <Compile Remove="Views\NovaPasta\**" />
+    <Content Remove="Views\Categories\**" />
+    <Content Remove="Views\NovaPasta\**" />
+    <EmbeddedResource Remove="Views\Categories\**" />
+    <EmbeddedResource Remove="Views\NovaPasta\**" />
+    <None Remove="Views\Categories\**" />
+    <None Remove="Views\NovaPasta\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.2">
