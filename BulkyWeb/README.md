@@ -11,3 +11,9 @@
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));)
 - ConectionString in appsettings.json
 NuGet packages -> NuGet shell -> update-database
+
+### Create table (MySQL + entity framework)
+
+- ApplicationDbContext.cs
+NuGet packages -> NuGet shell -> add-migration __name__
+NuGet packages -> NuGet shell -> update-database
