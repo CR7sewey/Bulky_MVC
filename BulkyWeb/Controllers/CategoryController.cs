@@ -29,6 +29,23 @@ namespace BulkyWeb.Controllers
         [HttpPost]
         public IActionResult Create(Category obj)
         {
+            if (obj.CategoryName.ToLower() == obj.DisplayOrder.ToString())
+            {
+                ModelState.AddModelError("CategoryName", "The category name can't be the same as Display Order");
+            }
+            // if the category exists in the database, add an error
+            var objFromDb = _db.Categories.FirstOrDefault(s => s.CategoryName == obj.CategoryName);
+            if (objFromDb != null)
+            {
+                ModelState.AddModelError("CategoryName", "The category already exists");
+            }
+            
+            if (obj.DisplayOrder <= 0)
+            {
+                ModelState.AddModelError("DisplayOrder", "The value needs to be positive");
+            }
+
+
             if (ModelState.IsValid)
             {
                 _db.Categories.Add(obj); // provided and habndled by entity framework! no open and close connection, or inserts!
