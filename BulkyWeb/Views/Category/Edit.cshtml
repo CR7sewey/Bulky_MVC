@@ -1,0 +1,49 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model Category
+
+
+<form method="post">
+	<input type="hidden" asp-for="Id" /> <!--- hidden input for the id of the category to be edited - not needed here -->
+	<div class="border p-3 mt-4">
+		<div class="row pb-2">
+
+			<h2 class="text-primary">Edit Category</h2>
+		</div>
+		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+		<div class="mb-3 row p-1">
+			<label class="p-0">Category Name</label>
+			<input type="text" class="form-control" asp-for="CategoryName" value="@Model.CategoryName" />
+			<span asp-validation-for="CategoryName" class="text-danger"></span> <!--- tag helper for showing errors from controller ModelState -->
+		</div>
+		<div class="mb-3 row">
+			<label class="p-0">Display Order</label>
+			<input class="form-control" name="displayOrder" asp-for="DisplayOrder" /> <!--- nao precisa de value pq ja esta a ser passado o category model + tag helpers--->
+			<span asp-validation-for="DisplayOrder" class="text-danger"></span>
+
+		</div>
+		<div class="row">
+			<div class="col-6 col-md-3">
+				<button type="submit" class="btn btn-primary form-control" style="width:150px">
+					Edit
+
+				</button>
+			</div>
+
+			<div class="col-6 col-md-3">
+				<a asp-controller="Category" asp-action="Index" class="btn btn-secondary form-control" style="width:150px">
+					Back to List
+				</a>
+			</div>
+		</div>
+	</div>
+</form>
+
+@section Scripts {
+	@{
+		//await Html.RenderPartialAsync("_ValidationScriptsPartial");
+		// client side validation is not working, so we need to include the following script files - ex: required
+		<partial name="_ValidationScriptsPartial" />
+	}
+}
