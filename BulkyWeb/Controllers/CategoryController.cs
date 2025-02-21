@@ -101,11 +101,28 @@ namespace BulkyWeb.Controllers
             return View();
         }
 
-
-        [HttpDelete]
-        public IActionResult Delete(Category obj)
+        public IActionResult Delete(int? id)
         {
-            var objFromDb = _db.Categories.FirstOrDefault(s => s.Id == obj.Id);
+            if (id == null || id == 0)
+            {
+                return NotFound();
+            }
+            //Category? obj = _db.Categories.Find(id);
+            // FirstOrDefault(s => s.Id == id);
+            Category? obj = _db.Categories.FirstOrDefault(i => i.Id == id);
+            // where(s => s.Id == id).FirstOrDefault();
+            if (obj == null)
+            {
+                return NotFound();
+            }
+            return View(obj);
+        }
+
+
+        [HttpPost, ActionName("Delete")]
+        public IActionResult DeletePOST(int? id)
+        {
+            var objFromDb = _db.Categories.FirstOrDefault(s => s.Id == id);
             if (objFromDb == null)
             {
                 return NotFound();
