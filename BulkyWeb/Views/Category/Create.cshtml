@@ -13,10 +13,13 @@
 		<div class="mb-3 row p-1">
 			<label class="p-0">Category Name</label>
 			<input type="text" class="form-control" asp-for="CategoryName" />
+			<span asp-validation-for="CategoryName" class="text-danger"></span> <!--- tag helper for showing errors from controller ModelState -->
 		</div>
 		<div class="mb-3 row">
 			<label class="p-0">Display Order</label>
 			<input class="form-control" name="displayOrder" asp-for="DisplayOrder" />
+			<span asp-validation-for="DisplayOrder" class="text-danger"></span>
+
 		</div>
 		<div class="row">
 			<div class="col-6 col-md-3">
