@@ -50,6 +50,8 @@ namespace BulkyWeb.Controllers
             {
                 _db.Categories.Add(obj); // provided and habndled by entity framework! no open and close connection, or inserts!
                 _db.SaveChanges();
+                //TempData.Add("Success", $"{objFromDb.CategoryName} created successfully");
+                TempData["Success"] = $"{obj.CategoryName} created successfully";
                 return RedirectToAction("Index");
             }
             return View();
@@ -96,6 +98,9 @@ namespace BulkyWeb.Controllers
             {
                 _db.Categories.Update(obj); // provided and habndled by entity framework! no open and close connection, or inserts!
                 _db.SaveChanges();
+               // TempData.Add("Success", $"{obj.CategoryName} category updated successfully");
+                TempData["Success"] = $"{obj.CategoryName} updated successfully";
+
                 return RedirectToAction("Index");
             }
             return View();
@@ -129,6 +134,9 @@ namespace BulkyWeb.Controllers
             }
             _db.Categories.Remove(objFromDb);
             _db.SaveChanges();
+            //TempData.Add("Success", $"{objFromDb.CategoryName} deleted successfully");
+            TempData["Error"] = $"{objFromDb.CategoryName} deleted successfully";
+
             return RedirectToAction("Index");
         }
 
