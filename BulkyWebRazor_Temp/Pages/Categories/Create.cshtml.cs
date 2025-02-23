@@ -50,7 +50,7 @@ namespace BulkyWebRazor_Temp.Pages.Categories
                 TempData["Success"] = $"{Category.CategoryName} created successfully";
                 return RedirectToPage("Index");
                 }
-            return RedirectToPage("Create");
+            return Page();
         }
 
     }
