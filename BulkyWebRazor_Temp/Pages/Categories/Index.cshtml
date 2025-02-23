@@ -10,7 +10,7 @@
 		</div>
 		<div class="col-6">
 			<h2 class="text-primary text-end">
-				<a asp-page="Categories/Create" class="btn btn-primary"> 
+				<a asp-page="/Categories/Create" class="btn btn-primary"> 
 					<i class="bi bi-file-plus col"></i>Add New Category
 				</a>
 			</h2>
@@ -40,12 +40,7 @@
 					</td>
 					<td>
 						<div class="w-75 btn-group" role="group">
-							<a asp-page="Categories/Edit" asp-route-id="@item.Id" class="btn btn-primary mx-2">
-								<i class="bi bi-pencil-square"></i> Edit
-							</a>
-							<a asp-ppage="Categories/Delete" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger mx-2">
-								<i class="bi bi-trash-fill"></i> Delete
-							</a>
+							
 						</div>
 					</td>
 				</tr>
