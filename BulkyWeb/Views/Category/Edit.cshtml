@@ -3,42 +3,56 @@
 *@
 @model Category
 
-
-<form method="post">
-	<input type="hidden" asp-for="Id" /> <!--- hidden input for the id of the category to be edited - not needed here -->
-	<div class="border p-3 mt-4">
-		<div class="row pb-2">
-
-			<h2 class="text-primary">Edit Category</h2>
-		</div>
-		<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-		<div class="mb-3 row p-1">
-			<label class="p-0">Category Name</label>
-			<input type="text" class="form-control" asp-for="CategoryName" value="@Model.CategoryName" />
-			<span asp-validation-for="CategoryName" class="text-danger"></span> <!--- tag helper for showing errors from controller ModelState -->
-		</div>
-		<div class="mb-3 row">
-			<label class="p-0">Display Order</label>
-			<input class="form-control" name="displayOrder" asp-for="DisplayOrder" /> <!--- nao precisa de value pq ja esta a ser passado o category model + tag helpers--->
-			<span asp-validation-for="DisplayOrder" class="text-danger"></span>
-
-		</div>
+<div class="card shadow border-0 mt-4">
+	<div class="card-header bg-secondary bg-gradient m-lg-0 py-3">
 		<div class="row">
-			<div class="col-6 col-md-3">
-				<button type="submit" class="btn btn-primary form-control" style="width:150px">
-					Edit
+			<div class="col-12 text-center">
+				<h2 class="text-white py-2">Edit Category</h2>
 
-				</button>
-			</div>
-
-			<div class="col-6 col-md-3">
-				<a asp-controller="Category" asp-action="Index" class="btn btn-secondary form-control" style="width:150px">
-					Back to List
-				</a>
 			</div>
 		</div>
 	</div>
-</form>
+	<div class="card-body p-4">
+		<form method="post">
+			<input type="hidden" asp-for="Id" /> <!--- hidden input for the id of the category to be edited - not needed here -->
+			<div class="border p-3 mt-4">
+			
+				<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+					<div class="form-floating py-2 col-12">
+						<input type="text" class="form-control border-0 shadow" asp-for="CategoryName" value="@Model.CategoryName" />
+						<label class="ms-2">Category Name</label>
+						<span asp-validation-for="CategoryName" class="text-danger"></span> <!--- tag helper for showing errors from controller ModelState -->
+					</div>
+					<div class="form-floating py-2 col-12">
+						<input class="form-control border-0 shadow" asp-for="DisplayOrder" />
+						<label class="ms-2">Display Order</label>
+						<span asp-validation-for="DisplayOrder" class="text-danger"></span>
+
+					</div>
+
+
+
+	
+				<div class="row  mt-3">
+					<div class="col-6 col-md-3">
+						<button type="submit" class="btn btn-primary form-control" style="width:150px">
+							Edit
+
+						</button>
+					</div>
+
+					<div class="col-6 col-md-3">
+						<a asp-controller="Category" asp-action="Index" class="btn btn-secondary form-control" style="width:150px">
+							Back to List
+						</a>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
 
 @section Scripts {
 	@{

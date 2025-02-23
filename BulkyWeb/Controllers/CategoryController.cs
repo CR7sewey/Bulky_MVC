@@ -81,12 +81,7 @@ namespace BulkyWeb.Controllers
             {
                 ModelState.AddModelError("", "The category name can't be the same as Display Order");
             }
-            // if the category exists in the database, add an error
-            var objFromDb = _db.Categories.FirstOrDefault(s => s.CategoryName == obj.CategoryName);
-            if (objFromDb != null)
-            {
-                ModelState.AddModelError("CategoryName", "The category already exists");
-            }
+
 
             if (obj.DisplayOrder <= 0)
             {
