@@ -10,7 +10,7 @@ namespace Bulky.DataAccess.Repository.IRepository
     public interface ICategoryRepository: IRepository<Category>
     {
         // methods from IRepository are inherited
-        void Update(CategoryRepository category);
+        void Update(Category category);
         void Save();
 
     }

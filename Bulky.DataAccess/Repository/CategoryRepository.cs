@@ -16,7 +16,7 @@ namespace Bulky.DataAccess.Repository
 
         private readonly ApplicationDbContext _db;
         
-        public CategoryRepository(ApplicationDbContext db): base(db)
+        public CategoryRepository(ApplicationDbContext db): base(db) // reponsavel pela injecao da db
         {
             _db = db;
             
@@ -27,7 +27,7 @@ namespace Bulky.DataAccess.Repository
             _db.SaveChanges();
         }
 
-        public void Update(CategoryRepository category)
+        public void Update(Category category)
         {
             _db.Update(category);
         }
