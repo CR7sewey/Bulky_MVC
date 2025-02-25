@@ -11,7 +11,7 @@ namespace Bulky.DataAccess.Repository.IRepository
     {
         // methods from IRepository are inherited
         void Update(Category category);
-        void Save();
+        //void Save();
 
     }
 }

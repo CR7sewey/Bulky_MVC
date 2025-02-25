@@ -7,7 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>(); // add dependcy injection to the implementation!
+//builder.Services.AddScoped<ICategoryRepository, CategoryRepository>(); // add dependcy injection to the implementation!
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); // add dependcy injection to the implementation!
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 

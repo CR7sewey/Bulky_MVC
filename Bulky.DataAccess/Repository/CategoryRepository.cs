@@ -22,11 +22,11 @@ namespace Bulky.DataAccess.Repository
             
         }
 
-        public void Save()
+       /* public void Save()
         {
             _db.SaveChanges();
         }
-
+       */
         public void Update(Category category)
         {
             _db.Update(category);

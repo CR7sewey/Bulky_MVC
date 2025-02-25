@@ -12,15 +12,17 @@ namespace BulkyWeb.Controllers
         // if legacy .NET framework, we need to open DB connection here, then query the database, then close the connection
         // if .NET Core, we use Entity Framework Core
         // remove the DB connection from here to Repository!
-        private readonly ICategoryRepository _db;
-        public CategoryController(ICategoryRepository db)
+        //private readonly ICategoryRepository _db;
+        private readonly IUnitOfWork _unitOfWork;
+        public CategoryController(IUnitOfWork unitOfWork)
         {
-            _db = db;
+           // _db = db;
+            _unitOfWork = unitOfWork;
         }
         public IActionResult Index()
         {
             //  List<Category> objCategoryList = _db.Categories.ToList<Category>();
-            List<Category> objCategoryList = _db.GetAll().ToList();
+            List<Category> objCategoryList = _unitOfWork.Category.GetAll().ToList();
             return View(objCategoryList);
         }
 
@@ -38,7 +40,7 @@ namespace BulkyWeb.Controllers
             }
             // if the category exists in the database, add an error
             //var objFromDb = _db.Categories.FirstOrDefault(s => s.CategoryName == obj.CategoryName);
-            var objFromDb = _db.Get(s => s.CategoryName == obj.CategoryName);
+            var objFromDb = _unitOfWork.Category.Get(s => s.CategoryName == obj.CategoryName);
             if (objFromDb != null)
             {
                 ModelState.AddModelError("CategoryName", "The category already exists");
@@ -53,9 +55,9 @@ namespace BulkyWeb.Controllers
             if (ModelState.IsValid)
             {
                 //_db.Categories.Add(obj); // provided and habndled by entity framework! no open and close connection, or inserts!
-                _db.Add(obj);
+                _unitOfWork.Category.Add(obj);
                 //_db.SaveChanges();
-                _db.Save();
+                _unitOfWork.Save();
                 //TempData.Add("Success", $"{objFromDb.CategoryName} created successfully");
                 TempData["Success"] = $"{obj.CategoryName} created successfully";
                 return RedirectToAction("Index");
@@ -72,7 +74,7 @@ namespace BulkyWeb.Controllers
             //Category? obj = _db.Categories.Find(id);
             // FirstOrDefault(s => s.Id == id);
             //Category? obj = _db.Categories.FirstOrDefault(i => i.Id == id);
-            Category? obj = _db.Get(i => i.Id == id);
+            Category? obj = _unitOfWork.Category.Get(i => i.Id == id);
             // where(s => s.Id == id).FirstOrDefault();
             if (obj == null)
             {
@@ -99,9 +101,9 @@ namespace BulkyWeb.Controllers
             if (ModelState.IsValid)
             {
                 // _db.Categories.Update(obj); // provided and habndled by entity framework! no open and close connection, or inserts!
-                _db.Update(obj);
+                _unitOfWork.Category.Update(obj);
                 //_db.SaveChanges();
-                _db.Save();
+                _unitOfWork.Save();
                 // TempData.Add("Success", $"{obj.CategoryName} category updated successfully");
                 TempData["Success"] = $"{obj.CategoryName} updated successfully";
 
@@ -119,7 +121,7 @@ namespace BulkyWeb.Controllers
             //Category? obj = _db.Categories.Find(id);
             // FirstOrDefault(s => s.Id == id);
             //Category? obj = _db.Categories.FirstOrDefault(i => i.Id == id);
-            Category? obj = _db.Get(i => i.Id == id);
+            Category? obj = _unitOfWork.Category.Get(i => i.Id == id);
             // where(s => s.Id == id).FirstOrDefault();
             if (obj == null)
             {
@@ -133,15 +135,15 @@ namespace BulkyWeb.Controllers
         public IActionResult DeletePOST(int? id)
         {
             // var objFromDb = _db.Categories.FirstOrDefault(s => s.Id == id);
-            var objFromDb = _db.Get(s => s.Id == id);
+            var objFromDb = _unitOfWork.Category.Get(s => s.Id == id);
             if (objFromDb == null)
             {
                 return NotFound();
             }
             //_db.Categories.Remove(objFromDb);
-            _db.Remove(objFromDb);
+            _unitOfWork.Category.Remove(objFromDb);
             //_db.SaveChanges();
-            _db.Save();
+            _unitOfWork.Save();
             //TempData.Add("Success", $"{objFromDb.CategoryName} deleted successfully");
             TempData["Error"] = $"{objFromDb.CategoryName} deleted successfully";
 
