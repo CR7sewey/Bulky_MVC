@@ -4,8 +4,9 @@ using Bulky.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace BulkyWeb.Controllers
+namespace BulkyWeb.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
 
@@ -16,7 +17,7 @@ namespace BulkyWeb.Controllers
         private readonly IUnitOfWork _unitOfWork;
         public CategoryController(IUnitOfWork unitOfWork)
         {
-           // _db = db;
+            // _db = db;
             _unitOfWork = unitOfWork;
         }
         public IActionResult Index()
@@ -45,7 +46,7 @@ namespace BulkyWeb.Controllers
             {
                 ModelState.AddModelError("CategoryName", "The category already exists");
             }
-            
+
             if (obj.DisplayOrder <= 0)
             {
                 ModelState.AddModelError("DisplayOrder", "The value needs to be positive");
