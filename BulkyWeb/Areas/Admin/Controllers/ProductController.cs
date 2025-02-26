@@ -1,5 +1,6 @@
 ﻿using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models.Models;
+using Bulky.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -28,27 +29,55 @@ namespace BulkyWeb.Areas.Admin.Controllers
                     Value = i.Id.ToString()
                 });
             //ViewBag.CategoryList = CategoryList;
-            ViewData["CategoryList"] = CategoryList;
+            //ViewData["CategoryList"] = CategoryList;
             // viewdata/viewbag to pass data to view (not vice versa) to temporarily store data not in a model (in this case Product)
-            return View();
+            ProductVM productVM = new ProductVM()
+            {
+                Product = new Product(),
+                CategoryList = CategoryList
+            };
+            return View(productVM);
         }
 
         [HttpPost]
-        public IActionResult Create(Product obj)
+        public IActionResult Create(ProductVM obj)
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.Product.Add(obj);
+                _unitOfWork.Product.Add(obj.Product);
                 _unitOfWork.Save();
-                TempData["Success"] = $"{obj.Title} created successfully";
+                TempData["Success"] = $"{obj.Product.Title} created successfully";
                 return RedirectToAction("Index");
             }
 
-            return View(obj);
+            IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category.GetAll()
+               .Select(i => new SelectListItem  // projections!!!!!!!! similar to map
+               {
+                   Text = i.CategoryName,
+                   Value = i.Id.ToString()
+               });
+            ProductVM productVM = new ProductVM()
+            {
+                Product = obj.Product,
+                CategoryList = CategoryList
+            };
+
+            return View(productVM);
         }
 
         public IActionResult Edit(int? id)
         {
+            IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category.GetAll()
+                .Select(i => new SelectListItem  // projections!!!!!!!! similar to map
+                {
+                    Text = i.CategoryName,
+                    Value = i.Id.ToString()
+                });
+
+
+           
+
+
             if (id == null || id == 0)
             {
                 return NotFound();
@@ -58,21 +87,35 @@ namespace BulkyWeb.Areas.Admin.Controllers
             {
                 return NotFound();
             }
+            ProductVM productVM = new ProductVM()
+            {
+                Product = obj,
+                CategoryList = CategoryList
+            };
 
-            return View(obj);
+            return View(productVM);
         }
 
         [HttpPost]
-        public IActionResult Edit(Product obj)
+        public IActionResult Edit(ProductVM obj)
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.Product.Update(obj);
+                _unitOfWork.Product.Update(obj.Product);
                 _unitOfWork.Save();
-                TempData["Success"] = $"{obj.Title} updated successfully";
+                TempData["Success"] = $"{obj.Product.Title} updated successfully";
 
                 return RedirectToAction("Index");
             }
+
+            IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category.GetAll()
+               .Select(i => new SelectListItem  // projections!!!!!!!! similar to map
+               {
+                   Text = i.CategoryName,
+                   Value = i.Id.ToString()
+               });
+            
+            obj.CategoryList = CategoryList;
             return View(obj);
         }
 
