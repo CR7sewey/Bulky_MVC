@@ -1,6 +1,7 @@
 ﻿using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BulkyWeb.Areas.Admin.Controllers
 {
@@ -20,7 +21,15 @@ namespace BulkyWeb.Areas.Admin.Controllers
 
         public IActionResult Create()
         {
-
+            IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category.GetAll()
+                .Select(i => new SelectListItem  // projections!!!!!!!! similar to map
+                {
+                    Text = i.CategoryName,
+                    Value = i.Id.ToString()
+                });
+            //ViewBag.CategoryList = CategoryList;
+            ViewData["CategoryList"] = CategoryList;
+            // viewdata/viewbag to pass data to view (not vice versa) to temporarily store data not in a model (in this case Product)
             return View();
         }
 
