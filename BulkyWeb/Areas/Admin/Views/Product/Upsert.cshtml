@@ -12,13 +12,16 @@
 	<div class="card-header bg-secondary bg-gradient m-lg-0 py-3">
 		<div class="row">
 			<div class="col-12 text-center">
-				<h2 class="text-white py-2">Create Product</h2>
+				<h2 class="text-white py-2">
+					<span>@(Model.Product.Id==0 ? "Create":"Update")</span> Product
+				</h2>
 
 			</div>
 		</div>
 	</div>
 	<div class="card-body p-4">
 		<form method="post" class="row" enctype="multipart/form-data">
+			<input type="hidden" asp-for="Product.Id" /> <!--- hidden input for the id of the category to be edited - not needed here -->
 			<div class="border p-3">
 				<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 				
@@ -89,7 +92,7 @@
 				<div class="row pt-2">
 					<div class="col-6 col-md-3">
 						<button type="submit" class="btn btn-primary form-control" style="width:150px">
-							Create
+							@(Model.Product.Id == 0 ? "Create" : "Update"))
 						</button>
 					</div>
 

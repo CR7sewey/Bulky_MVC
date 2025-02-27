@@ -20,7 +20,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
             return View(products);
         }
 
-        public IActionResult Create()
+        public IActionResult Upsert(int? id)
         {
             IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category.GetAll()
                 .Select(i => new SelectListItem  // projections!!!!!!!! similar to map
@@ -31,16 +31,28 @@ namespace BulkyWeb.Areas.Admin.Controllers
             //ViewBag.CategoryList = CategoryList;
             //ViewData["CategoryList"] = CategoryList;
             // viewdata/viewbag to pass data to view (not vice versa) to temporarily store data not in a model (in this case Product)
+
             ProductVM productVM = new ProductVM()
             {
                 Product = new Product(),
                 CategoryList = CategoryList
             };
+            if (id != null) // update
+            {
+                Product obj = _unitOfWork.Product.Get(i => i.Id == id);
+                if (obj == null)
+                {
+                    return NotFound();
+                }
+                productVM.Product = obj;
+            }         
+
+            
             return View(productVM);
         }
 
         [HttpPost]
-        public IActionResult Create(ProductVM obj)
+        public IActionResult Upsert(ProductVM obj, IFormFile? file)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +77,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
             return View(productVM);
         }
 
-        public IActionResult Edit(int? id)
+        /*public IActionResult Edit(int? id)
         {
             IEnumerable<SelectListItem> CategoryList = _unitOfWork.Category.GetAll()
                 .Select(i => new SelectListItem  // projections!!!!!!!! similar to map
@@ -73,10 +85,6 @@ namespace BulkyWeb.Areas.Admin.Controllers
                     Text = i.CategoryName,
                     Value = i.Id.ToString()
                 });
-
-
-           
-
 
             if (id == null || id == 0)
             {
@@ -118,7 +126,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
             obj.CategoryList = CategoryList;
             return View(obj);
         }
-
+        */
         public IActionResult Delete(int? id)
         {
             if (id == null || id == 0)
