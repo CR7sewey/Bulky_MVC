@@ -10,9 +10,12 @@ namespace BulkyWeb.Areas.Admin.Controllers
     public class ProductController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        public ProductController(IUnitOfWork unitOfWork)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+        public ProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
         {
             _unitOfWork = unitOfWork;
+            _webHostEnvironment = webHostEnvironment;
         }
         public IActionResult Index()
         {
@@ -56,7 +59,36 @@ namespace BulkyWeb.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                _unitOfWork.Product.Add(obj.Product);
+                if (file != null)
+                {
+                    string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images/product");
+                    if (!Directory.Exists(uploadsFolder))
+                    {
+                        Directory.CreateDirectory(uploadsFolder);
+                    }
+
+                    // Generate a unique file name
+                    string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                    string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                    // Save the file
+                    using (var fileStream = new FileStream(filePath, FileMode.Create))
+                    {
+                        file.CopyToAsync(fileStream);
+                    }
+
+                    // Return the file path or URL
+                    string fileUrl = $"@/images/product/{uniqueFileName}";
+                    obj.Product.ImageUrl = fileUrl;
+                }
+                if (obj.Product.Id != 0) // present in the database - update
+                {
+                    _unitOfWork.Product.Update(obj.Product);
+                }
+                else
+                {
+                    _unitOfWork.Product.Add(obj.Product);
+                }
                 _unitOfWork.Save();
                 TempData["Success"] = $"{obj.Product.Title} created successfully";
                 return RedirectToAction("Index");
@@ -162,5 +194,45 @@ namespace BulkyWeb.Areas.Admin.Controllers
 
         }
 
+        public async Task<string> UploadImage(IFormFile file)
+        {
+            if (file == null || file.Length == 0)
+            {
+                return "BadRequest";
+            }
+
+            try
+            {
+                // Ensure the directory exists
+                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images/product");
+                if (!Directory.Exists(uploadsFolder))
+                {
+                    Directory.CreateDirectory(uploadsFolder);
+                }
+
+                // Generate a unique file name
+                string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+                // Save the file
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(fileStream);
+                }
+
+                // Return the file path or URL
+                string fileUrl = $"@/images/product/{uniqueFileName}";
+                return fileUrl;
+            }
+            catch (Exception ex)
+            {
+                return "Internal Server Error: {ex.Message}";
+            }
+        }
+
     }
+
+
+
+
 }
