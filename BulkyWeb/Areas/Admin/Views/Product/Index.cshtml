@@ -44,7 +44,7 @@
 						Category
 					</th>
 					<th></th>
-				
+
 				</tr>
 			</thead>
 			<tbody>
@@ -64,7 +64,7 @@
 							@item.Author
 						</td>
 						<td>
-							@item.CategoryId
+							@(item.Category.Equals(null) ? "No Category" : $"{item.Category.CategoryName}")
 						</td>
 						<td>
 							<div class="w-75 btn-group" role="group">

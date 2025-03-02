@@ -19,6 +19,8 @@ namespace Bulky.DataAccess.Repository
         {
             _db = db;
             this.dbSet = _db.Set<T>(); // entity ex: Categories _db.Categories == dbSet
+            _db.Products.Include(p => p.Category);//.Include(p => p.CategoryId); // inclue the navigation property based on the foreign key relationship
+            // 
         }
 
         public void Add(T entity)
@@ -26,15 +28,30 @@ namespace Bulky.DataAccess.Repository
             dbSet.Add(entity);
         }
 
-        public T Get(Expression<Func<T, bool>> filter)
+        public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null)
         {
             IQueryable<T> data = dbSet.Where(filter); // like an array of data
+            if (includeProperties != null)
+            {
+                foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    data = data.Include(includeProperty);
+                }
+            }
             return data.FirstOrDefault();
         }
 
-        public IEnumerable<T> GetAll()
+        // Category,CoverType
+        public IEnumerable<T> GetAll(string? includeProperties = null)
         {
             IQueryable<T> data = dbSet;
+            if (includeProperties != null)
+            {
+                foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                {
+                    data = data.Include(includeProperty);
+                }
+            }
             return data.ToList();
         }
 
