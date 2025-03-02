@@ -71,6 +71,24 @@ namespace BulkyWeb.Areas.Admin.Controllers
                     string uniqueFileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                     string filePath = Path.Combine(uploadsFolder, uniqueFileName);
 
+                    if (file == null)
+                    {
+                        obj.Product.ImageUrl = _unitOfWork.Product.Get(i => i.Id == obj.Product.Id).ImageUrl;
+                    }
+                    else
+                    {
+
+                        if (!string.IsNullOrEmpty(obj.Product.ImageUrl))
+                        {
+                            string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, obj.Product.ImageUrl.TrimStart('@').TrimStart('\\'));
+                            if (System.IO.File.Exists(imagePath))
+                            {
+                                System.IO.File.Delete(imagePath);
+                            }
+                        }
+                    }
+              //  C: \Users\Utilizador\C#\source\NET_CORE_MVC\Bulky\BulkyWeb\wwwroot\images\product\6e54ddd0-d445-4650-a8cd-6e8a1472ad07.jpeg
+
                     // Save the file
                     using (var fileStream = new FileStream(filePath, FileMode.Create))
                     {

@@ -18,6 +18,18 @@ namespace Bulky.DataAccess.Repository
         }
         public void Update(Product product)
         {
+            // manual updating
+            /*var objFromDB = _db.Products.FirstOrDefault(p => p.Id == product.Id);
+            var imageURL = objFromDB.ImageUrl;
+            if (objFromDB != null)
+            {
+                objFromDB.Title = product.Title
+            ...
+                if (product.ImageUrl == null) {
+                    objFromDB.ImageUrl = imageURL;
+                }
+               */
+            
             _db.Update(product);
         }
     }
