@@ -212,6 +212,18 @@ namespace BulkyWeb.Areas.Admin.Controllers
 
         }
 
+        #region API calls
+        // https://datatables.net/manual/ajax
+        // endpoint to get all products - api
+        [HttpGet]
+        public IActionResult GetAll()
+        {
+            List<Product> products = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();
+            return Json(new { data = products });
+        }
+        #endregion
+
+
         public async Task<string> UploadImage(IFormFile file)
         {
             if (file == null || file.Length == 0)
