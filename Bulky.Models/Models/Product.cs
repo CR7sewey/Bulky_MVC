@@ -16,7 +16,7 @@ namespace Bulky.Models.Models
         [Required]
         [MaxLength(30)] // server side validation
         public string Title { get; set; }
-        [MaxLength(200)] // server side validation
+        [MaxLength(2000)] // server side validation
         public string Description { get; set; }
         [Required]
         public string ISBN { get; set; }

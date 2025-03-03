@@ -29,7 +29,7 @@ namespace Bulky.DataAccess.Repository
                     objFromDB.ImageUrl = imageURL;
                 }
                */
-            
+
             _db.Update(product);
         }
     }
