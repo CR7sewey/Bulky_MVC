@@ -7,7 +7,7 @@ function loadDataTable() {
         {
             ajax: {
                 url: '/admin/product/getall',
-                //dataSrc: 'data'
+                dataSrc: 'data'
             },
 
             columns: [
