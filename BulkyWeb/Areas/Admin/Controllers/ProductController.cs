@@ -223,7 +223,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
             return Json(new { data = products });
         }
 
-        //[HttpDelete]
+        [HttpDelete]
         public IActionResult DeleteProduct(int? id)
         {
             if (id == null || id == 0)
