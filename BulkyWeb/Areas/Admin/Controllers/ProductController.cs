@@ -3,6 +3,7 @@ using Bulky.Models.Models;
 using Bulky.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BulkyWeb.Areas.Admin.Controllers
 {
@@ -221,6 +222,34 @@ namespace BulkyWeb.Areas.Admin.Controllers
             List<Product> products = _unitOfWork.Product.GetAll(includeProperties: "Category").ToList();
             return Json(new { data = products });
         }
+
+        //[HttpDelete]
+        public IActionResult DeleteProduct(int? id)
+        {
+            if (id == null || id == 0)
+            {
+                return Json(new {success = false, message = "Product not found..."});
+            }
+            Product obj = _unitOfWork.Product.Get(i => i.Id == id);
+            if (obj == null)
+            {
+                return Json(new { success = false, message = "Product not found..." });
+            }
+            var fileName = Path.Combine(_webHostEnvironment.WebRootPath, obj.ImageUrl.TrimStart('@').TrimStart('\\'));
+
+            _unitOfWork.Product.Remove(obj);
+            _unitOfWork.Save();
+
+            if (System.IO.File.Exists(fileName))
+                    {
+                        System.IO.File.Delete(fileName);
+                    }
+                
+            
+
+            return Json(new { success = true, message = "Product deleted..." } );
+        }
+
         #endregion
 
 
