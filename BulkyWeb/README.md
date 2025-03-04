@@ -17,3 +17,8 @@ NuGet packages -> NuGet shell -> update-database
 - ApplicationDbContext.cs
 NuGet packages -> NuGet shell -> add-migration __name__
 NuGet packages -> NuGet shell -> update-database
+
+### Identity
+
+- NuGet packages -> Microsoft.AspNetCore.Identity.EntityFrameworkCore
+- tables/entities? -> on migrationm, tables are created automatically

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 //builder.Services.AddScoped<ICategoryRepository, CategoryRepository>(); // add dependcy injection to the implementation!
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); // add dependcy injection to the implementation!
@@ -32,7 +33,7 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication(); // if username or password is valid - middleware
 app.UseAuthorization(); // acess based on role - ex Admin and Customer
-
+app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
     pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}"); // Customer is the default area
