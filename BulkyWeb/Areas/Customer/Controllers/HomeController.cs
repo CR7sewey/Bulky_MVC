@@ -26,6 +26,20 @@ namespace BulkyWeb.Areas.Customer.Controllers
             return View(productList);
         }
 
+        public IActionResult Details(int id)
+        {
+
+            Product product = _unitOfWork.Product.Get(p => p.Id == id, includeProperties: "Category");
+
+            if (product == null || id == 0)
+            {
+                return NotFound();
+            }
+
+            return View(product);
+
+        }
+
       
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
