@@ -19,6 +19,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // binds the IndentityUser to the EntityFramework
 builder.Services.AddIdentity<IdentityUser,IdentityRole>().AddEntityFrameworkStores<ApplicationDbContext>().AddDefaultTokenProviders();
+builder.Services.ConfigureApplicationCookie(options => // middleware for authentication and authorization, override the default path
+{
+    options.LoginPath = $"/Identity/Account/Login";
+    options.LogoutPath = $"/Identity/Account/Logout";
+    options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+});
+
 // email sender
 builder.Services.AddScoped<IEmailSender, EmailSender>();
 
