@@ -1,0 +1,64 @@
+﻿@using Bulky.Models.Models
+@model Company
+
+<div class="card shadow border-0 my-4">
+	<div class="card-header bg-secondary bg-gradient m-lg-0 py-3">
+		<div class="row">
+			<div class="col-12 text-center">
+				<h2 class="text-white py-2">Delete Company</h2>
+
+			</div>
+		</div>
+	</div>
+	<div class="card-body p-4">
+		<form method="post">
+			<input type="hidden" asp-for="Id" /> <!--- hidden input for the id of the category to be edited - not needed here -->
+			<div class="border p-3 mt-4">
+				<div class="form-floating py-2 col-12">
+					<input type="text" class="form-control border-0 shadow" asp-for="@Model.Name" disabled />
+					<label class="ms-2" asp-for="@Model.Name"></label>
+				</div>
+
+
+				<div class="form-floating py-2 col-12">
+					<input class="form-control border-0 shadow" asp-for="@Model.StreetAddress" disabled />
+					<label class="ms-2" asp-for="@Model.StreetAddress"></label>
+
+				</div>
+
+				<div class="form-floating py-2 col-12">
+					<input class="form-control border-0 shadow" asp-for="@Model.PhoneNumber" disabled />
+					<label class="ms-2" asp-for="@Model.PhoneNumber"></label>
+
+				</div>
+
+				<div class="form-floating py-2 col-12">
+					<input class="form-control border-0 shadow" asp-for="@Model.State" disabled />
+					<label class="ms-2" asp-for="@Model.State"></label>
+				</div>
+
+				<div class="form-floating py-2 col-12">
+					<input class="form-control border-0 shadow" asp-for="@Model.PostalCode" disabled />
+					<label class="ms-2" asp-for="@Model.PostalCode"></label>
+				</div>
+		
+				<div class="row mt-3">
+					<div class="col-6 col-md-3">
+						<button type="submit" class="btn btn-danger form-control" style="width:150px">
+							Delete
+
+						</button>
+					</div>
+
+					<div class="col-6 col-md-3">
+						<a asp-controller="Company" asp-action="Index" class="btn btn-secondary form-control" style="width:150px">
+							Back to List
+						</a>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
+

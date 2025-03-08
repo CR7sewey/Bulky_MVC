@@ -1,0 +1,124 @@
+﻿@using Bulky.Models.Models;
+@model Company
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@{
+}
+
+
+<div class="card shadow border-0 my-4">
+	<div class="card-header bg-secondary bg-gradient m-lg-0 py-3">
+		<div class="row">
+			<div class="col-12 text-center">
+				<h2 class="text-white py-2">
+					<span>@(Model.Id == 0 ? "Create" : "Update")</span> Product
+				</h2>
+
+			</div>
+		</div>
+	</div>
+	<div class="card-body p-4">
+		<form method="post" class="row" enctype="multipart/form-data">
+			<input type="hidden" asp-for="@Model.Id" />
+			<div class="row">
+				<div class="col-10">
+					<div class="border p-3">
+						<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+						<div class="form-floating py-2 col-12">
+							<input type="text" class="form-control border-0 shadow" asp-for="@Model.Name" />
+							<label class="ms-2" asp-for="@Model.Name"></label>
+							<span asp-validation-for="@Model.Name" class="text-danger"></span> <!--- tag helper for showing errors from controller ModelState -->
+						</div>
+
+	
+						<div class="form-floating py-2 col-12">
+							<input class="form-control border-0 shadow" asp-for="@Model.StreetAddress" />
+							<label class="ms-2" asp-for="@Model.StreetAddress"></label>
+							<span asp-validation-for="@Model.StreetAddress" class="text-danger"></span>
+
+						</div>
+
+						<div class="form-floating py-2 col-12">
+							<input class="form-control border-0 shadow" asp-for="@Model.City" />
+							<label class="ms-2" asp-for="@Model.City"></label>
+							<span asp-validation-for="@Model.City" class="text-danger"></span>
+
+						</div>
+
+						<div class="form-floating py-2 col-12">
+							<input class="form-control border-0 shadow" asp-for="@Model.State" />
+							<label class="ms-2" asp-for="@Model.State"></label>
+							<span asp-validation-for="@Model.State" class="text-danger"></span>
+						</div>
+
+						<div class="form-floating py-2 col-12">
+							<input class="form-control border-0 shadow" asp-for="@Model.PostalCode" />
+							<label class="ms-2" asp-for="@Model.PostalCode"></label>
+							<span asp-validation-for="@Model.PostalCode" class="text-danger"></span>
+						</div>
+
+						<div class="form-floating py-2 col-12">
+							<input class="form-control border-0 shadow" asp-for="@Model.PhoneNumber" />
+							<label class="ms-2" asp-for="@Model.PhoneNumber"></label>
+							<span asp-validation-for="@Model.PhoneNumber" class="text-danger"></span>
+						</div>
+
+						
+
+						<div class="row pt-2">
+							<div class="col-6 col-md-3">
+								<button type="submit" class="btn btn-primary form-control" style="width:150px">
+									@(Model.Id == 0 ? "Create" : "Update"))
+								</button>
+							</div>
+
+							<div class="col-6 col-md-3">
+								<a asp-area="Admin" asp-controller="Company" asp-action="Index" class="btn btn-outline-primary form-control" style="width:150px">
+									Back to List
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			
+			</div>
+			
+		</form>
+	</div>
+</div>
+
+
+
+
+@section Scripts {
+	@{
+		//await Html.RenderPartialAsync("_ValidationScriptsPartial");
+		// client side validation is not working, so we need to include the following script files - ex: required
+		<partial name="_ValidationScriptsPartial" />
+		<!-- Place the following <script> and <textarea> tags your HTML's <body> -->
+		<script>
+			tinymce.init({
+			  selector: 'textarea',
+			  plugins: [
+				// Core editing features
+				'anchor', 'autolink', 'charmap', 'codesample', 'emoticons', 'link', 'lists', 'table', 'visualblocks', 'wordcount',
+				// Your account includes a free trial of TinyMCE premium features
+				// Try the most popular premium features until Mar 15, 2025:
+				'checklist', 'mediaembed', 'casechange', 'export', 'formatpainter', 'pageembed', 'a11ychecker', 'tinymcespellchecker', 'permanentpen', 'powerpaste', 'advtable', 'advcode', 'editimage', 'advtemplate', 'ai', 'mentions', 'tinycomments', 'tableofcontents', 'footnotes', 'mergetags', 'autocorrect', 'typography', 'inlinecss', 'markdown','importword', 'exportword', 'exportpdf'
+			  ],
+			  toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+			  tinycomments_mode: 'embedded',
+			  tinycomments_author: 'Author name',
+			  mergetags_list: [
+				{ value: 'First.Name', title: 'First Name' },
+				{ value: 'Email', title: 'Email' },
+			  ],
+			  ai_request: (request, respondWith) => respondWith.string(() => Promise.reject('See docs to implement AI Assistant')),
+			});
+		</script>
+
+	}
+}

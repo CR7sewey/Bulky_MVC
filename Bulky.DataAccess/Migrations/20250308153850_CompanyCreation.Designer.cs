@@ -4,6 +4,7 @@ using Bulky.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bulky.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250308153850_CompanyCreation")]
+    partial class CompanyCreation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -99,38 +102,6 @@ namespace Bulky.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Companys");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            City = "New York",
-                            Name = "Company1",
-                            PhoneNumber = 1234567890,
-                            PostalCode = "12345",
-                            State = "NY",
-                            StreetAddress = "123 Main St"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            City = "New York",
-                            Name = "Company2",
-                            PhoneNumber = 1234567890,
-                            PostalCode = "12345",
-                            State = "NY",
-                            StreetAddress = "456 Main St"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            City = "New York",
-                            Name = "Company3",
-                            PhoneNumber = 1234567890,
-                            PostalCode = "12345",
-                            State = "NY",
-                            StreetAddress = "789 Main St"
-                        });
                 });
 
             modelBuilder.Entity("Bulky.Models.Models.Product", b =>

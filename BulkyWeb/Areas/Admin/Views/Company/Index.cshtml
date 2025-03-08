@@ -1,0 +1,63 @@
+﻿@using Bulky.Models.Models
+@model List<Company>
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+@{
+}
+<div class="card shadow border-0 my-4">
+	<div class="card-header bg-secondary bg-gradient m-lg-0 py-3">
+		<div class="row">
+			<div class="col-12 text-center">
+				<h2 class="text-white py-2">Company List</h2>
+
+			</div>
+		</div>
+	</div>
+	<div class="card-body p-4">
+		<div class="row pb-3">
+			<div class="col-6">
+				<h2 class="text-primary">Company List</h2>
+			</div>
+			<div class="col-6">
+				<h2 class="text-primary text-end">
+					<a asp-controller="Company" asp-action="Upsert" class="btn btn-primary">
+						<i class="bi bi-file-plus col"></i>Add New Company
+					</a>
+				</h2>
+			</div>
+		</div>
+		<table id="tblDataCompany" class="table table-bordered table-striped">
+			<thead>
+				<tr>
+					<th>
+						Name
+					</th>
+					<th>
+						Phone Number
+					</th>
+					<th>
+						Street Address
+					</th>
+					<th>
+						City
+					</th>
+
+					<th>
+						State
+					</th>
+
+
+					<th></th>
+
+				</tr>
+			</thead>
+		</table>
+	</div>
+</div>
+
+
+@section Scripts {
+	<script src="~/js/company.js"></script>
+}
