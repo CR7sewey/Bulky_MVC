@@ -29,7 +29,7 @@ namespace Bulky.DataAccess.Repository
             {
                 return _db.ShoppingCarts.Where(it => it.UserId == Id ).ToList();
             }
-            return base.GetAll(includeProperties);
+            return base.GetAll(it => it.UserId == Id, includeProperties);
         }
     }
 }

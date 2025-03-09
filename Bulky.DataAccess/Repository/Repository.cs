@@ -50,9 +50,13 @@ namespace Bulky.DataAccess.Repository
         }
 
         // Category,CoverType
-        public IEnumerable<T> GetAll(string? includeProperties = null)
+        public IEnumerable<T> GetAll(Expression<Func<T, bool>>? filter, string? includeProperties = null)
         {
             IQueryable<T> data = dbSet;
+            if (filter != null)
+            {
+                data = data.Where(filter);
+            }
             if (includeProperties != null)
             {
                 foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
