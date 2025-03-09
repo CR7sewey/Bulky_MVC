@@ -8,6 +8,7 @@ using Bulky.DataAccess.Data;
 using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
 using Microsoft.EntityFrameworkCore;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Bulky.DataAccess.Repository
 {
@@ -28,9 +29,16 @@ namespace Bulky.DataAccess.Repository
             dbSet.Add(entity);
         }
 
-        public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null)
+        public T Get(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = false)
         {
-            IQueryable<T> data = dbSet.Where(filter); // like an array of data
+            IQueryable<T> data = dbSet;
+            if (!tracked)
+            {
+                data = data.AsNoTracking(); // entity framework does not track teh entity retrieved
+
+            }
+
+            data = data.Where(filter);
             if (includeProperties != null)
             {
                 foreach (var includeProperty in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
