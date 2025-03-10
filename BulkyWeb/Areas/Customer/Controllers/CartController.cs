@@ -24,15 +24,45 @@ namespace BulkyWeb.Areas.Customer.Controllers
             ApplicationUser user = _unitOfWork.ApplicationUser.Get(p => p.Id == userID);
 
             IEnumerable<ShoppingCart> ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(it => it.UserId == userID, includeProperties: "Product");
+            double ot = ShoppingCartList.Select(it => {
+
+                double price = GetCartPrice(it);
+                it.Price = price;
+
+                return it.Price*it.Count;
+
+            }).Sum();
+
+
             ShoppingCartVM shoppingCartVM = new ShoppingCartVM()
             {
                 ShoppingCartList = ShoppingCartList,
-                OrderTotal = 0
+                OrderTotal = ot
             };
 
             // Nota: Criei ViewModel pq para a view quero passar a lista de produtos e o total do pedido
 
             return View(shoppingCartVM);
+        }
+
+        private double GetCartPrice(ShoppingCart cart)
+        {
+             
+                if (cart.Count < 50)
+                {
+                    return cart.Product.Price;
+                }
+                else if (cart.Count >= 50 && cart.Count < 100)
+                {
+                    return cart.Product.Price50;
+                }
+                else
+                {
+                return cart.Product.Price100;
+            }
+
+              
+
         }
     }
 }
