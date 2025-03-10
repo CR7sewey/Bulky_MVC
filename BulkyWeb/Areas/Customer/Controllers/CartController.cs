@@ -45,6 +45,43 @@ namespace BulkyWeb.Areas.Customer.Controllers
             return View(shoppingCartVM);
         }
 
+        public ActionResult Plus(int cartId, int productId)
+        {
+            Console.WriteLine(cartId);
+            ShoppingCart shoppingCart = _unitOfWork.ShoppingCart.Get(it => it.Id == cartId && it.ProductId == productId);
+            shoppingCart.Count += 1;
+            _unitOfWork.ShoppingCart.Update(shoppingCart);
+            _unitOfWork.Save();
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult Minus(int cartId, int productId) // productId not needed
+        {
+            Console.WriteLine(cartId);
+            ShoppingCart shoppingCart = _unitOfWork.ShoppingCart.Get(it => it.Id == cartId && it.ProductId == productId);
+            if (shoppingCart.Count > 1)
+            {
+                shoppingCart.Count -= 1;
+                _unitOfWork.ShoppingCart.Update(shoppingCart);
+            }
+            else
+            {
+                _unitOfWork.ShoppingCart.Remove(shoppingCart);
+            }
+           
+            _unitOfWork.Save();
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult Delete(int cartId, int productId)
+        {
+            Console.WriteLine(cartId);
+            ShoppingCart shoppingCart = _unitOfWork.ShoppingCart.Get(it => it.Id == cartId && it.ProductId == productId);
+            _unitOfWork.ShoppingCart.Remove(shoppingCart);
+            _unitOfWork.Save();
+            return RedirectToAction("Index");
+        }
+
         private double GetCartPrice(ShoppingCart cart)
         {
              
