@@ -37,7 +37,13 @@ namespace BulkyWeb.Areas.Customer.Controllers
             ShoppingCartVM shoppingCartVM = new ShoppingCartVM()
             {
                 ShoppingCartList = ShoppingCartList,
-                OrderTotal = ot
+                OrderHeader = new OrderHeader()
+                {
+                    ApplicationUser = user,
+                    ApplicationUserId = userID,
+                    OrderTotal = ot
+                },
+                
             };
 
             // Nota: Criei ViewModel pq para a view quero passar a lista de produtos e o total do pedido
