@@ -90,7 +90,39 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
         public ActionResult Summary()
         {
-            return View();
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userID = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            ApplicationUser user = _unitOfWork.ApplicationUser.Get(p => p.Id == userID);
+
+            IEnumerable<ShoppingCart> ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(it => it.UserId == userID, includeProperties: "Product");
+            double ot = ShoppingCartList.Select(it => {
+
+                double price = GetCartPrice(it);
+                it.Price = price;
+
+                return it.Price * it.Count;
+
+            }).Sum();
+
+
+            ShoppingCartVM shoppingCartVM = new ShoppingCartVM()
+            {
+                ShoppingCartList = ShoppingCartList,
+                OrderHeader = new OrderHeader()
+                {
+                    ApplicationUser = user,
+                    ApplicationUserId = userID,
+                    Name = user.Name,
+                    StreetAddress = user.StreetAddress,
+                    City = user.City,
+                    State = user.State,
+                    PostalCode = user.PostalCode,
+                    PhoneNumber = user.PhoneNumber,
+                    OrderTotal = ot
+                },
+
+            };
+            return View(shoppingCartVM);
         }
 
         private double GetCartPrice(ShoppingCart cart)
