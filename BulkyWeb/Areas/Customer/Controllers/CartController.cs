@@ -2,6 +2,7 @@
 using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models.Models;
 using Bulky.Models.ViewModels;
+using Bulky.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -13,6 +14,8 @@ namespace BulkyWeb.Areas.Customer.Controllers
     public class CartController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        [BindProperty]
+        public ShoppingCartVM ShoppingCartVM { get; set; } // automatically ppouplated with values bcs of BindProperty
         public CartController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -34,7 +37,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
             }).Sum();
 
 
-            ShoppingCartVM shoppingCartVM = new ShoppingCartVM()
+            ShoppingCartVM = new ShoppingCartVM()
             {
                 ShoppingCartList = ShoppingCartList,
                 OrderHeader = new OrderHeader()
@@ -48,7 +51,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
             // Nota: Criei ViewModel pq para a view quero passar a lista de produtos e o total do pedido
 
-            return View(shoppingCartVM);
+            return View(ShoppingCartVM);
         }
 
         public ActionResult Plus(int cartId, int productId)
@@ -105,7 +108,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
             }).Sum();
 
 
-            ShoppingCartVM shoppingCartVM = new ShoppingCartVM()
+            ShoppingCartVM = new ShoppingCartVM()
             {
                 ShoppingCartList = ShoppingCartList,
                 OrderHeader = new OrderHeader()
@@ -122,7 +125,64 @@ namespace BulkyWeb.Areas.Customer.Controllers
                 },
 
             };
-            return View(shoppingCartVM);
+            return View(ShoppingCartVM);
+        }
+
+        [HttpPost]
+        [ActionName("Summary")]
+        public ActionResult SummaryPOST()
+        {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userID = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            ApplicationUser user = _unitOfWork.ApplicationUser.Get(p => p.Id == userID);
+
+            ShoppingCartVM.ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(it => it.UserId == userID, includeProperties: "Product"); // automatically populated (BindProperty)
+
+            ShoppingCartVM.OrderHeader.OrderDate = DateTime.Now;
+            ShoppingCartVM.OrderHeader.ApplicationUserId = userID;
+
+            double ot = ShoppingCartVM.ShoppingCartList.Select(it => {
+
+                double price = GetCartPrice(it);
+                it.Price = price;
+
+                return it.Price * it.Count;
+
+            }).Sum();
+
+            ShoppingCartVM.OrderHeader.OrderTotal = ot;
+
+            if (ShoppingCartVM.OrderHeader.ApplicationUser.CompanyId == null)
+            {
+                // regular costumer and need to capture payment
+                ShoppingCartVM.OrderHeader.OrderStatus = SD.Status_Pending;
+                ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatus_Pending;
+            }
+            else
+            {
+                // Company user
+                ShoppingCartVM.OrderHeader.OrderStatus = SD.Status_Approved;
+                ShoppingCartVM.OrderHeader.PaymentStatus = SD.PaymentStatus_DelayedPayment;
+            }
+            _unitOfWork.OrderHeader.Add(ShoppingCartVM.OrderHeader);
+            _unitOfWork.Save();
+
+            foreach (var item in ShoppingCartVM.ShoppingCartList)
+            {
+                var orderDetails = new OrderDetail
+                {
+                    ProductId = item.ProductId,
+                    Product = item.Product,
+                    Count = item.Count,
+                    OrderHeaderId = ShoppingCartVM.OrderHeader.Id,
+                    OrderHeader = ShoppingCartVM.OrderHeader
+                };
+                _unitOfWork.OrderDetails.Add(orderDetails);
+                _unitOfWork.Save();
+            }
+
+            // redirect to confirmation page
+            return View();
         }
 
         private double GetCartPrice(ShoppingCart cart)
