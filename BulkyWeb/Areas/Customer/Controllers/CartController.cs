@@ -82,6 +82,11 @@ namespace BulkyWeb.Areas.Customer.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult Summary()
+        {
+            return View();
+        }
+
         private double GetCartPrice(ShoppingCart cart)
         {
              
