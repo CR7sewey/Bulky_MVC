@@ -20,7 +20,7 @@ namespace Bulky.DataAccess.Repository
 
         public void Update(ShoppingCart shoppingCart)
         {
-            _db.Update(shoppingCart);
+            _db.ShoppingCarts.Update(shoppingCart);
         }
 
         public IEnumerable<ShoppingCart> GetAllUser(string Id, string? includeProperties = null)

@@ -4,22 +4,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Bulky.DataAccess.Data;
+using Bulky.DataAccess.Migrations;
 using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models.Models;
 
 namespace Bulky.DataAccess.Repository
 {
-    public class CompanyRepository : Repository<Company>, ICompanyRepository
+    public class OrderHeaderRepository: Repository<OrderHeader>, IOrderHeaderRepository
     {
         private readonly ApplicationDbContext _db;
-        public CompanyRepository(ApplicationDbContext db) : base(db)
+        public OrderHeaderRepository(ApplicationDbContext db) : base(db)
         {
             _db = db;
         }
 
-        public void Update(Company company)
+        public void update(OrderHeader obj)
         {
-            _db.Companys.Update(company);
+            _db.OrderHeaders.Update(obj);
         }
     }
 }

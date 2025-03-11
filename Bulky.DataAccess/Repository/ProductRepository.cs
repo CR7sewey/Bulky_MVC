@@ -30,7 +30,7 @@ namespace Bulky.DataAccess.Repository
                 }
                */
 
-            _db.Update(product);
+            _db.Products.Update(product);
         }
     }
     
