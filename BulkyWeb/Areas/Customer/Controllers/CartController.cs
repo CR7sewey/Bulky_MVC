@@ -139,6 +139,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
             ShoppingCartVM.ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(it => it.UserId == userID, includeProperties: "Product"); // automatically populated (BindProperty)
 
             ShoppingCartVM.OrderHeader.OrderDate = DateTime.Now;
+            ApplicationUser appuser = user; // do not do HsoppingCartVM....ApplicationUser bcs it will create a new orw in the table/entity; add a navigation property...
             ShoppingCartVM.OrderHeader.ApplicationUserId = userID;
 
             double ot = ShoppingCartVM.ShoppingCartList.Select(it => {
@@ -152,7 +153,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
             ShoppingCartVM.OrderHeader.OrderTotal = ot;
 
-            if (ShoppingCartVM.OrderHeader.ApplicationUser.CompanyId == null)
+            if (appuser.CompanyId.GetValueOrDefault()==0)
             {
                 // regular costumer and need to capture payment
                 ShoppingCartVM.OrderHeader.OrderStatus = SD.Status_Pending;
@@ -169,21 +170,44 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
             foreach (var item in ShoppingCartVM.ShoppingCartList)
             {
-                var orderDetails = new OrderDetail
+                OrderDetail orderDetails = new OrderDetail
                 {
                     ProductId = item.ProductId,
-                    Product = item.Product,
                     Count = item.Count,
                     OrderHeaderId = ShoppingCartVM.OrderHeader.Id,
-                    OrderHeader = ShoppingCartVM.OrderHeader
+                    Price = item.Price
                 };
                 _unitOfWork.OrderDetails.Add(orderDetails);
                 _unitOfWork.Save();
             }
 
+            // talvez aqui deveria-se tirar as coisas do carinho de compras 
+            if (appuser.CompanyId.GetValueOrDefault() == 0)
+            {
+                // regular costumer and need to capture payment - PAYMENT - STRIPE
+                
+            }
+            else
+            {
+                // Company user - CONIFMRATION
+                return RedirectToAction("OrderConfirmation", new {id = ShoppingCartVM.OrderHeader.Id});
+            }
+
             // redirect to confirmation page
             return View();
         }
+
+        public ActionResult OrderConfirmation(int Id)
+        {
+            
+            //ShoppingCartVM.ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(it => it.UserId == userID, includeProperties: "Product"); // automatically populated (BindProperty)
+
+            //Console.WriteLine(ShoppingCartVM.ShoppingCartList);
+
+          
+            return View(Id);
+        }
+
 
         private double GetCartPrice(ShoppingCart cart)
         {
