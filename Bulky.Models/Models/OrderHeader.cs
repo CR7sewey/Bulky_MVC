@@ -35,7 +35,7 @@ namespace Bulky.Models.Models
         public DateTime PaymentDate { get; set; }
         public DateOnly PaymentDueDate { get; set; }
 
-
+        public string? SessionId { get; set; } // session id from stripe or paypal
         public string? PaymentIntendId { get; set; } // id from stripe or paypal
 
         [Required]
