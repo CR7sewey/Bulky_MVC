@@ -41,12 +41,12 @@ namespace Bulky.DataAccess.Repository
             OrderHeader orderFromDb = _db.OrderHeaders.FirstOrDefault(u => u.Id == orderHeaderId);
             if (orderFromDb != null)
             {
-                if (orderFromDb.PaymentIntendId != null)
+                if (sessionId != null)
                 {
-                    orderFromDb.PaymentIntendId = stripePaymentIntentId;
+                    orderFromDb.SessionId = sessionId;
                 }
                 
-                if (orderFromDb.PaymentIntendId == null)
+                if (stripePaymentIntentId != null)
                 {
                     orderFromDb.PaymentIntendId = stripePaymentIntentId;
                     orderFromDb.PaymentDate = DateTime.Now;

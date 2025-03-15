@@ -141,8 +141,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
                     //shoppingCart.UserId = userID;
                     Count = sc.Count,
                     ProductId = product.Id,
-                    Product = product,
-                    ApplicationUser = user
+                    UserId = userID
                 };
                 _unitOfWork.ShoppingCart.Add(shoppingCart);
                 _unitOfWork.Save();

@@ -6,6 +6,8 @@ using Bulky.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Stripe;
+using Stripe.Checkout;
 
 namespace BulkyWeb.Areas.Customer.Controllers
 {
@@ -185,19 +187,52 @@ namespace BulkyWeb.Areas.Customer.Controllers
             if (appuser.CompanyId.GetValueOrDefault() == 0)
             {
                 // regular costumer and need to capture payment - PAYMENT - STRIPE
-                
+                var DOMAIN = "https://localhost:7169/";
+                var options = new Stripe.Checkout.SessionCreateOptions
+                    {
+                        SuccessUrl = DOMAIN+$"customer/cart/OrderConfirmation?id={ShoppingCartVM.OrderHeader.Id}",
+                        CancelUrl = DOMAIN + $"customer/cart/index",
+                        LineItems = new List<Stripe.Checkout.SessionLineItemOptions>(),
+                        Mode = "payment",
+                    };
+
+                foreach (var items in ShoppingCartVM.ShoppingCartList)
+                {
+                    options.LineItems.Add(
+                        new SessionLineItemOptions
+                        {
+                            PriceData = new SessionLineItemPriceDataOptions
+                            {
+                                UnitAmount = (long)(items.Product.Price * 100),
+                                Currency = "usd",
+                                ProductData = new SessionLineItemPriceDataProductDataOptions
+                                {
+                                    Name = items.Product.Title,
+                                }
+                            },   
+                            Quantity = items.Count,
+                        }
+                        );
+                }
+
+                var service = new SessionService();
+                // create session
+                Session session = service.Create(options);
+                _unitOfWork.OrderHeader.UpdateStripePaymentId(ShoppingCartVM.OrderHeader.Id, session.Id, session.PaymentIntentId);
+                //ShoppingCartVM.OrderHeader.PaymentIntendId = session.PaymentIntentId; -- only not null after payment done!
+                //ShoppingCartVM.OrderHeader.SessionId = session.Id;
+                _unitOfWork.Save();
+                Response.Headers.Add("Location", session.Url);
+                return new StatusCodeResult(303); // redirect to new url
             }
             else
             {
                 // Company user - CONIFMRATION
                 return RedirectToAction("OrderConfirmation", new {id = ShoppingCartVM.OrderHeader.Id});
             }
-
-            // redirect to confirmation page
-            return View();
         }
 
-        public ActionResult OrderConfirmation(int Id)
+        public ActionResult OrderConfirmation(int? Id)
         {
             
             //ShoppingCartVM.ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(it => it.UserId == userID, includeProperties: "Product"); // automatically populated (BindProperty)
