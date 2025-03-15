@@ -234,12 +234,42 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
         public ActionResult OrderConfirmation(int? Id)
         {
-            
-            //ShoppingCartVM.ShoppingCartList = _unitOfWork.ShoppingCart.GetAll(it => it.UserId == userID, includeProperties: "Product"); // automatically populated (BindProperty)
 
-            //Console.WriteLine(ShoppingCartVM.ShoppingCartList);
+            // check if payment was successful
+            OrderHeader orderHeader = _unitOfWork.OrderHeader.Get(it => it.Id == Id, includeProperties: "ApplicationUser");
+            if (orderHeader.PaymentStatus != SD.PaymentStatus_DelayedPayment)
+            { 
+                // order by customer
+                var sessionID = orderHeader.SessionId;
 
-          
+                var service = new SessionService();
+                var serviceSession = service.Get(sessionID);
+                if (serviceSession.PaymentIntentId.ToLower() == "paid")
+                {
+                    // update Payment Intent Id
+                    _unitOfWork.OrderHeader.UpdateStripePaymentId(ShoppingCartVM.OrderHeader.Id, sessionID, serviceSession.PaymentIntentId);
+                    // update status
+                    _unitOfWork.OrderHeader.UpdateStatus(ShoppingCartVM.OrderHeader.Id, SD.Status_Approved, SD.PaymentStatus_Approved);
+                    _unitOfWork.Save();
+                    
+
+                    // payment was successful
+                }
+                else
+                {
+                    // payment was not successful
+                }
+
+
+
+            }
+
+            _unitOfWork.ShoppingCart.RemoveRange(_unitOfWork.ShoppingCart.GetAll(it => it.UserId == orderHeader.ApplicationUserId).ToList());
+            _unitOfWork.Save();
+
+
+
+
             return View(Id);
         }
 
