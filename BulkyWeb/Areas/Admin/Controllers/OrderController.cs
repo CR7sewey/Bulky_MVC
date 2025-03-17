@@ -1,15 +1,17 @@
 ﻿using System.Diagnostics;
+using System.Security.Claims;
 using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models.Models;
+using Bulky.Models.ViewModels;
 using Bulky.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BulkyWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = SD.Role_Admin)]
     public class OrderController : Controller // order controller to manage orders
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -22,6 +24,47 @@ namespace BulkyWeb.Areas.Admin.Controllers
         public IActionResult Index()
         {
             return View();
+        }
+
+        public IActionResult Details(int orderId)
+        {
+            // order header
+            OrderHeader orderHeader = _unitOfWork.OrderHeader.Get(u => u.Id == orderId, includeProperties: "ApplicationUser");
+
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userID = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            ApplicationUser user = _unitOfWork.ApplicationUser.Get(p => p.Id == userID);
+            //role
+            if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Employee))
+            {
+              
+            }
+            else {
+                if (userID == orderHeader.ApplicationUserId)
+                {
+                    return RedirectToAction("Index");
+                }
+            }
+
+            
+
+            if (orderHeader == null)
+            {
+                return NotFound();
+            }
+
+
+            // order details
+            IEnumerable<OrderDetail> orderDetails = _unitOfWork.OrderDetails.GetAll(o => o.OrderHeaderId == orderHeader.Id, includeProperties: "Product");
+            //
+
+            OrderVM orderVM = new()
+            {
+                OrderHeader = orderHeader,
+                OrderDetails = orderDetails
+            };
+
+            return View(orderVM);
         }
 
         #region API calls
@@ -47,9 +90,6 @@ namespace BulkyWeb.Areas.Admin.Controllers
             
             
         }
-
-
-
         #endregion
     }
 }
