@@ -8,11 +8,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Stripe.Climate;
 
 namespace BulkyWeb.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize]
     public class OrderController : Controller // order controller to manage orders
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -99,6 +101,60 @@ namespace BulkyWeb.Areas.Admin.Controllers
             TempData["Success"] = "Order details updated successfully";
 
             return RedirectToAction(nameof(Details), new { orderId = orderHeader.Id });
+        }
+
+        [HttpPost]
+        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
+        public IActionResult ShipOrder()
+        {
+            var orderHeader = _unitOfWork.OrderHeader.Get(it => it.Id == OrderVM.OrderHeader.Id);
+            
+            orderHeader.TrackingNumber = OrderVM.OrderHeader.TrackingNumber;
+            orderHeader.Carrier = OrderVM.OrderHeader.Carrier;
+
+
+            if (orderHeader.Carrier.IsNullOrEmpty())
+            {
+                TempData["Error"] = "Please enter the carrier name";
+                return RedirectToAction(nameof(Details), new { orderId = OrderVM.OrderHeader.Id });
+
+            }
+            else if (orderHeader.TrackingNumber.IsNullOrEmpty())
+            {
+                TempData["Error"] = "Please enter the tracking number";
+                return RedirectToAction(nameof(Details), new { orderId = OrderVM.OrderHeader.Id });
+            }
+
+
+            orderHeader.ShippingDate = DateTime.Now;
+            orderHeader.OrderStatus = SD.Status_Shipped;
+            if (orderHeader.PaymentStatus == SD.PaymentStatus_DelayedPayment)
+            {
+                orderHeader.PaymentDueDate = DateOnly.FromDateTime(DateTime.Now.AddDays(30));
+            }
+
+            _unitOfWork.OrderHeader.update(orderHeader);
+            _unitOfWork.Save();
+
+            //_unitOfWork.OrderHeader.UpdateStatus(OrderVM.OrderHeader.Id, SD.Status_Shipped);
+            //_unitOfWork.Save();
+            TempData["Success"] = "Order details updated successfully";
+
+            return RedirectToAction(nameof(Details), new { orderId = OrderVM.OrderHeader.Id });
+
+        }
+
+        [HttpPost]
+        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
+        public IActionResult StartProcessing()
+        {
+//            var orderHeader = _unitOfWork.OrderHeader.Get(it => it.Id == OrderVM.OrderHeader.Id);
+            _unitOfWork.OrderHeader.UpdateStatus(OrderVM.OrderHeader.Id, SD.Status_InProcess);  
+            _unitOfWork.Save();
+            TempData["Success"] = "Order details updated successfully";
+
+            return RedirectToAction(nameof(Details), new { orderId = OrderVM.OrderHeader.Id });
+
         }
 
 
