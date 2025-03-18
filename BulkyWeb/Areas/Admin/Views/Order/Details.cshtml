@@ -296,7 +296,7 @@
                             </ul>
                             @if (Model.OrderHeader.PaymentStatus == SD.PaymentStatus_DelayedPayment && User.IsInRole(SD.Role_User_Customer) && Model.OrderHeader.OrderStatus == SD.Status_Shipped)
                             {
-                                <input type="submit" class="btn btn-success form-control my-1" value="Pay Now" />
+                                <input type="submit" asp-action="Details" class="btn btn-success form-control my-1" value="Pay Now" />
                             }
                             @if (User.IsInRole("Admin") || User.IsInRole("Employee"))
                             {
