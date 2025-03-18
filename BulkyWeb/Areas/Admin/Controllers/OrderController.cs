@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Stripe.Climate;
 
 namespace BulkyWeb.Areas.Admin.Controllers
 {
@@ -108,7 +109,7 @@ namespace BulkyWeb.Areas.Admin.Controllers
         public IActionResult GetAll(string status)
         {
         
-            List<OrderHeader> orders = _unitOfWork.OrderHeader.GetAll(includeProperties: "ApplicationUser").ToList(); 
+            List<OrderHeader> orders = _unitOfWork.OrderHeader.GetAll(includeProperties: "ApplicationUser").ToList();
             Dictionary<string,string> keyValuePairs = new Dictionary<string, string>()
             {
                 {"pending", SD.Status_Pending},
@@ -116,10 +117,27 @@ namespace BulkyWeb.Areas.Admin.Controllers
                 {"completed", SD.Status_Shipped},
                 {"approved", SD.Status_Approved},                
             };
+
+
             if (status != "all" && status != null)
             {
                 orders = orders.Where(o => o.OrderStatus == keyValuePairs[status]).ToList();
             }
+
+
+            //role
+            if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Employee))
+            {
+
+            }
+            else
+            {
+                var claimsIdentity = (ClaimsIdentity)User.Identity;
+                var userID = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+                ApplicationUser user = _unitOfWork.ApplicationUser.Get(p => p.Id == userID);
+                orders = orders.Where(o => o.ApplicationUserId == userID).ToList();
+            }
+
             return Json(new { data = orders });
             
             
