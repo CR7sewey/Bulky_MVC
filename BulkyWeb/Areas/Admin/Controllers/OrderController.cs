@@ -16,6 +16,9 @@ namespace BulkyWeb.Areas.Admin.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
 
+        [BindProperty]
+        public OrderVM OrderVM { get; set; }
+
         public OrderController(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -58,14 +61,45 @@ namespace BulkyWeb.Areas.Admin.Controllers
             IEnumerable<OrderDetail> orderDetails = _unitOfWork.OrderDetails.GetAll(o => o.OrderHeaderId == orderHeader.Id, includeProperties: "Product");
             //
 
-            OrderVM orderVM = new()
+            OrderVM = new()
             {
                 OrderHeader = orderHeader,
                 OrderDetails = orderDetails
             };
 
-            return View(orderVM);
+            return View(OrderVM);
         }
+
+        [HttpPost]
+        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
+        public IActionResult UpdateOrderDetail()
+        {
+
+            // automatically updated by the model binder - OrderVM.OrderHeader = orderHeader;
+            var orderHeader = _unitOfWork.OrderHeader.Get(it => it.Id == OrderVM.OrderHeader.Id);
+            orderHeader.Name = OrderVM.OrderHeader.Name;
+            orderHeader.PhoneNumber = OrderVM.OrderHeader.PhoneNumber;
+            orderHeader.StreetAddress = OrderVM.OrderHeader.StreetAddress;
+            orderHeader.City = OrderVM.OrderHeader.City;
+            orderHeader.State = OrderVM.OrderHeader.State;
+            orderHeader.PostalCode = OrderVM.OrderHeader.PostalCode;
+            if (!string.IsNullOrEmpty(OrderVM.OrderHeader.TrackingNumber))
+            {
+                orderHeader.TrackingNumber = OrderVM.OrderHeader.TrackingNumber;
+            }
+            if (!string.IsNullOrEmpty(OrderVM.OrderHeader.Carrier))
+            {
+                orderHeader.Carrier = OrderVM.OrderHeader.Carrier;
+            }
+
+            _unitOfWork.OrderHeader.update(orderHeader);
+            _unitOfWork.Save();
+
+            TempData["Success"] = "Order details updated successfully";
+
+            return RedirectToAction(nameof(Details), new { orderId = orderHeader.Id });
+        }
+
 
         #region API calls
         // https://datatables.net/manual/ajax
