@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Stripe;
 using Stripe.Climate;
 
 namespace BulkyWeb.Areas.Admin.Controllers
@@ -155,6 +156,37 @@ namespace BulkyWeb.Areas.Admin.Controllers
 
             return RedirectToAction(nameof(Details), new { orderId = OrderVM.OrderHeader.Id });
 
+        }
+
+        [HttpPost]
+        [Authorize(Roles = SD.Role_Admin + "," + SD.Role_Employee)]
+        public IActionResult CancelOrder()
+        {
+            var orderHeader = _unitOfWork.OrderHeader.Get(it => it.Id == OrderVM.OrderHeader.Id);
+
+
+            // stripe refund
+            if (orderHeader.PaymentStatus == SD.PaymentStatus_Approved)
+            {
+                var options = new RefundCreateOptions
+                {
+                    Amount = Convert.ToInt32(orderHeader.OrderTotal * 100),
+                    Reason = RefundReasons.RequestedByCustomer,
+                    Charge = orderHeader.PaymentIntendId
+                };
+                var service = new RefundService();
+                Refund refund = service.Create(options);
+                //orderHeader.OrderStatus = SD.Status_Refunded;
+                _unitOfWork.OrderHeader.UpdateStatus(OrderVM.OrderHeader.Id, SD.Status_Cancelled, SD.Status_Refunded);
+            }
+            else
+            {
+                _unitOfWork.OrderHeader.UpdateStatus(OrderVM.OrderHeader.Id, SD.Status_Cancelled, SD.Status_Cancelled);
+
+            }
+            _unitOfWork.Save();
+            TempData["Success"] = "Order details updated successfully";
+            return RedirectToAction(nameof(Details), new { orderId = OrderVM.OrderHeader.Id });
         }
 
 
