@@ -69,7 +69,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
         public ActionResult Minus(int cartId, int productId) // productId not needed
         {
             Console.WriteLine(cartId);
-            ShoppingCart shoppingCart = _unitOfWork.ShoppingCart.Get(it => it.Id == cartId && it.ProductId == productId);
+            ShoppingCart shoppingCart = _unitOfWork.ShoppingCart.Get(it => it.Id == cartId && it.ProductId == productId, tracked: true);
             if (shoppingCart.Count > 1)
             {
                 shoppingCart.Count -= 1;
@@ -81,15 +81,31 @@ namespace BulkyWeb.Areas.Customer.Controllers
             }
            
             _unitOfWork.Save();
+
+            
+            var valueCount = 0;
+            valueCount = _unitOfWork.ShoppingCart.GetAll(it => it.ApplicationUser.Id == shoppingCart.UserId).ToList().Count();
+            HttpContext.Session.SetInt32(SD.SessionCart, valueCount);
+
             return RedirectToAction("Index");
         }
 
         public ActionResult Delete(int cartId, int productId)
         {
             Console.WriteLine(cartId);
-            ShoppingCart shoppingCart = _unitOfWork.ShoppingCart.Get(it => it.Id == cartId && it.ProductId == productId);
+            ShoppingCart shoppingCart = _unitOfWork.ShoppingCart.Get(it => it.Id == cartId && it.ProductId == productId, tracked: true); // otherwise remove will fail bcs not tracked! -> repository
+
+         
+            var valueCount = 0;
+            valueCount = _unitOfWork.ShoppingCart.GetAll(it => it.ApplicationUser.Id == shoppingCart.UserId).ToList().Count()-1;
+            HttpContext.Session.SetInt32(SD.SessionCart, valueCount);
+
             _unitOfWork.ShoppingCart.Remove(shoppingCart);
             _unitOfWork.Save();
+
+
+            
+
             return RedirectToAction("Index");
         }
 

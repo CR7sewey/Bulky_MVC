@@ -12,6 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
+
+
 //builder.Services.AddScoped<ICategoryRepository, CategoryRepository>(); // add dependcy injection to the implementation!
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); // add dependcy injection to the implementation!
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -27,6 +29,18 @@ builder.Services.ConfigureApplicationCookie(options => // middleware for authent
     options.LoginPath = $"/Identity/Account/Login";
     options.LogoutPath = $"/Identity/Account/Logout";
     options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
+});
+
+
+
+// adding session to the services
+builder.Services.AddDistributedMemoryCache();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromSeconds(10);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 });
 
 // email sender
@@ -48,6 +62,9 @@ Stripe.StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe")["
 app.UseRouting();
 app.UseAuthentication(); // if username or password is valid - middleware
 app.UseAuthorization(); // acess based on role - ex Admin and Customer
+
+app.UseSession();
+
 app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",

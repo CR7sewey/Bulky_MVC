@@ -3,6 +3,7 @@ using System.Security.Claims;
 using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models;
 using Bulky.Models.Models;
+using Bulky.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +14,6 @@ namespace BulkyWeb.Areas.Customer.Controllers
     {
         private readonly ILogger<HomeController> _logger;
         private readonly IUnitOfWork _unitOfWork;
-
         public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -22,6 +22,15 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
         public IActionResult Index()
         {
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userID = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier);
+            var valueCount = 0;
+            if (userID != null) // logged in
+            {
+                valueCount = _unitOfWork.ShoppingCart.GetAll(u => u.UserId == userID.Value).ToList().Count();
+            }
+
+            HttpContext.Session.SetInt32(SD.SessionCart, valueCount);
 
             IEnumerable<Product> productList = _unitOfWork.Product.GetAll(includeProperties: "Category");
 
@@ -157,6 +166,14 @@ namespace BulkyWeb.Areas.Customer.Controllers
                 TempData["Success"] = $"{product.Title} increased successfully";
                 
             }
+
+            var valueCount = 0;
+            if (_unitOfWork.ShoppingCart.Get(t => t.UserId == userID) != null)
+            {
+                valueCount = _unitOfWork.ShoppingCart.GetAll(u => u.UserId == userID).ToList().Count();
+            }
+            
+            HttpContext.Session.SetInt32(SD.SessionCart, valueCount);
             return RedirectToAction(nameof(Index));
         }
 
