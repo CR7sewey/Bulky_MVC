@@ -31,6 +31,12 @@ builder.Services.ConfigureApplicationCookie(options => // middleware for authent
     options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
 });
 
+// facebook auth
+builder.Services.AddAuthentication().AddFacebook(options => // https://developers.facebook.com/apps/643041038325503/settings/basic/
+{
+    options.AppId = "643041038325503";
+    options.AppSecret = "09baa3ae98d5dbc0dd4915a5e7627ae8";
+});
 
 
 // adding session to the services
