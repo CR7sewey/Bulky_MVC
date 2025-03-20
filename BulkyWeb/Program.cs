@@ -34,8 +34,8 @@ builder.Services.ConfigureApplicationCookie(options => // middleware for authent
 // facebook auth
 builder.Services.AddAuthentication().AddFacebook(options => // https://developers.facebook.com/apps/643041038325503/settings/basic/
 {
-    options.AppId = "643041038325503";
-    options.AppSecret = "09baa3ae98d5dbc0dd4915a5e7627ae8";
+    options.AppId = builder.Configuration.GetSection("FacebookLogin")["AppId"];
+    options.AppSecret = builder.Configuration.GetSection("FacebookLogin")["AppSecret"];
 });
 
 
