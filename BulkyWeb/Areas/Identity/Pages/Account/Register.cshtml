@@ -9,7 +9,12 @@
         <div class="row">
             <div class="col-12 text-center">
                 <h2 class="py-2 text-white">
-                    Register
+                    Register - 
+                    @if (User.IsInRole(SD.Role_Admin)) 
+                    { <span>Admin Portal</span> }
+                    @if (User.IsInRole(SD.Role_Employee)) {
+                        <span>Employee Portal</span>
+                    }
                 </h2>
             </div>
         </div>
@@ -25,16 +30,16 @@
                         <label asp-for="Input.Email" class="ms-2 text-muted">Email</label>
                         <span asp-validation-for="Input.Email" class="text-danger"></span>
                     </div>
-                    
+
                     <div class="form-floating mb-3 col-md-6">
-                            <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                            <label asp-for="Input.Password" class="ms-2 text-muted">Password</label>
-                            <span asp-validation-for="Input.Password" class="text-danger"></span>
+                        <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                        <label asp-for="Input.Password" class="ms-2 text-muted">Password</label>
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
                     </div>
                     <div class="form-floating mb-3 col-md-6">
-                            <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                            <label asp-for="Input.ConfirmPassword" class="ms-2 text-muted">Confirm Password</label>
-                            <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                        <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                        <label asp-for="Input.ConfirmPassword" class="ms-2 text-muted">Confirm Password</label>
+                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
                     </div>
 
                     <div class="form-floating mb-3 col-md-6">
@@ -73,20 +78,22 @@
                         <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
                     </div>
 
+                    @if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Employee))
+                    {
+                        <div class="form-floating mb-3 col-md-6">
+                            <select asp-for="@Model.Input.Role" asp-items="@Model.Input.RoleList" class="form-select">
+                                <option disabled selected>-- Select Category --</option>
 
-                    <div class="form-floating mb-3 col-md-6">
-                        <select asp-for="@Model.Input.Role" asp-items="@Model.Input.RoleList" class="form-select">
-                            <option disabled selected>-- Select Category --</option>
+                            </select>
+                        </div>
+                        <div class="form-floating mb-3 col-md-6">
+                            <select asp-for="@Model.Input.Company" asp-items="@Model.Input.CompanyList" class="form-select">
+                                <option disabled selected>-- Select Category --</option>
 
-                        </select>
-                    </div>
-
-                    <div class="form-floating mb-3 col-md-6">
-                        <select asp-for="@Model.Input.Company" asp-items="@Model.Input.CompanyList" class="form-select">
-                            <option disabled selected>-- Select Category --</option>
-
-                        </select>
-                    </div>
+                            </select>
+                        </div>
+                    }
+                    
 
                     <div class="col-12">
                         <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
@@ -95,6 +102,7 @@
                 </form>
             </div>
             <div class="col-md-12 p-3 text-center">
+                @if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Employee)) {
                 <section>
                     <p class="divider-text d-flex pt-3">or</p>
                     <hr />
@@ -125,6 +133,7 @@
                         }
                     }
                 </section>
+                }
             </div>
         </div>
     </div>

@@ -275,6 +275,7 @@ namespace BulkyWeb.Areas.Customer.Controllers
                 {
                     // payment was not successful
                 }
+                HttpContext.Session.Clear();
 
 
 

@@ -150,19 +150,44 @@ namespace BulkyWeb.Areas.Identity.Pages.Account
                 await _roleManager.CreateAsync(new IdentityRole(SD.Role_Employee));
             }
 
-            Input = new() {
-                RoleList = _roleManager.Roles.Select(x => x.Name).Select(r => new SelectListItem
-                {
-                    Text = r,
-                    Value = r
-
-                }), // unitOfWork here!
+            Input = new()
+            {
+                
                 CompanyList = _unitOfWork.Company.GetAll().Select(r => new SelectListItem
                 {
                     Text = r.Name,
                     Value = r.Id.ToString()
                 })
             };
+
+            if (User.IsInRole(SD.Role_Admin)) {
+
+
+                var RoleList = _roleManager.Roles.Select(x => x.Name).Select(r => new SelectListItem
+                {
+                    Text = r,
+                    Value = r
+
+                }); // unitOfWork here!
+                Input.RoleList = RoleList;
+
+            }
+            else if (User.IsInRole(SD.Role_Employee))
+            {
+
+
+                var RoleList = _roleManager.Roles.Select(x => x.Name).Where(it => it != "Admin").Select(r => new SelectListItem
+                {
+                    Text = r,
+                    Value = r
+
+                }); // unitOfWork here!
+                Input.RoleList = RoleList;
+
+            }
+
+
+
 
             ReturnUrl = returnUrl;
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
@@ -223,7 +248,13 @@ namespace BulkyWeb.Areas.Identity.Pages.Account
                     }
                     else
                     {
-                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        if (User.IsInRole(SD.Role_Admin) || User.IsInRole(SD.Role_Employee)) { 
+                            TempData["success"] = $"User {user.UserName} created successfully";
+                        }
+                        else
+                        {
+                            await _signInManager.SignInAsync(user, isPersistent: false);
+                        }
                         return LocalRedirect(returnUrl);
                     }
                 }
