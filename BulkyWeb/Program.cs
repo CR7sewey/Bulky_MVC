@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Identity;
 using Bulky.Models.Models;
 using Bulky.Utility;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Bulky.DataAccess.DbInitializer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
 //builder.Services.AddScoped<ICategoryRepository, CategoryRepository>(); // add dependcy injection to the implementation!
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>(); // add dependcy injection to the implementation!
@@ -70,10 +72,20 @@ app.UseAuthentication(); // if username or password is valid - middleware
 app.UseAuthorization(); // acess based on role - ex Admin and Customer
 
 app.UseSession();
-
+SeedDatabase();
 app.MapRazorPages();
 app.MapControllerRoute(
     name: "default",
     pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}"); // Customer is the default area
 
 app.Run();
+
+
+void SeedDatabase()
+{
+    using var scope = app.Services.CreateScope();
+    var dbInitializer = scope.ServiceProvider.GetRequiredService<IDbInitializer>();
+    dbInitializer.Initialize();
+
+}
+

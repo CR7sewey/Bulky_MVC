@@ -132,7 +132,7 @@ namespace BulkyWeb.Areas.Identity.Pages.Account
 
         public async Task OnGetAsync(string returnUrl = null)
         {
-            var roleAdmin = await _roleManager.RoleExistsAsync(SD.Role_Admin);
+            /*var roleAdmin = await _roleManager.RoleExistsAsync(SD.Role_Admin);
             if (!roleAdmin)
             {
                 await _roleManager.CreateAsync(new IdentityRole(SD.Role_Admin));
@@ -148,7 +148,7 @@ namespace BulkyWeb.Areas.Identity.Pages.Account
             if (!_roleManager.RoleExistsAsync(SD.Role_Employee).GetAwaiter().GetResult())
             {
                 await _roleManager.CreateAsync(new IdentityRole(SD.Role_Employee));
-            }
+            }*/
 
             Input = new()
             {
