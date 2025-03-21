@@ -1,11 +1,16 @@
 ﻿using System.Security.Claims;
+using System.Text.Encodings.Web;
+using System.Text;
 using Bulky.DataAccess.Repository.IRepository;
 using Bulky.Models.Models;
 using Bulky.Models.ViewModels;
 using Bulky.Utility;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.WebUtilities;
 using Stripe;
 using Stripe.Checkout;
 
@@ -16,11 +21,13 @@ namespace BulkyWeb.Areas.Customer.Controllers
     public class CartController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IEmailSender _emailSender;
         [BindProperty]
         public ShoppingCartVM ShoppingCartVM { get; set; } // automatically ppouplated with values bcs of BindProperty
-        public CartController(IUnitOfWork unitOfWork)
+        public CartController(IUnitOfWork unitOfWork, IEmailSender emailSender)
         {
             _unitOfWork = unitOfWork;
+            _emailSender = emailSender;
         }
         public IActionResult Index()
         {
@@ -283,6 +290,16 @@ namespace BulkyWeb.Areas.Customer.Controllers
 
             _unitOfWork.ShoppingCart.RemoveRange(_unitOfWork.ShoppingCart.GetAll(it => it.UserId == orderHeader.ApplicationUserId).ToList());
             _unitOfWork.Save();
+
+
+            var claimsIdentity = (ClaimsIdentity)User.Identity;
+            var userID = claimsIdentity.FindFirst(ClaimTypes.NameIdentifier).Value;
+            ApplicationUser user = _unitOfWork.ApplicationUser.Get(p => p.Id == userID);
+
+           
+            _emailSender.SendEmailAsync(orderHeader.ApplicationUser.Email, "Order placed! Thank You",
+                $"<p>New Order - {orderHeader.Id}</a~p>.");
+
 
 
 
